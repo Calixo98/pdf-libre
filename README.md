@@ -10,7 +10,17 @@ Tus archivos **no se suben a ningún servidor**. Cloudflare sólo sirve los arch
 
 Licencia MIT (ver [LICENSE](LICENSE)).
 
-Sitio publicado: https://pdf-libre.stopsfinest.workers.dev
+## Sitio publicado
+
+**https://pdf-libre.stopsfinest.workers.dev**
+
+| Herramienta | Enlace |
+|---|---|
+| JPG a PDF | https://pdf-libre.stopsfinest.workers.dev/jpg-a-pdf/ |
+| Editor de PDF | https://pdf-libre.stopsfinest.workers.dev/editor/ |
+| Quitar contraseña | https://pdf-libre.stopsfinest.workers.dev/desbloquear/ |
+
+Un proyecto de [Renova Founders](https://renova-ashen.vercel.app/).
 
 
 ## Uso local

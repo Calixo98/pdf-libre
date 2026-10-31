@@ -226,12 +226,15 @@ a {
   display: inline-flex;
   align-items: baseline;
   gap: 12px;
-  color: var(--text);
-  text-decoration: none;
   margin-right: auto;
 }
 
+.brand a {
+  text-decoration: none;
+}
+
 .brand-word {
+  color: var(--text);
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.35rem;
@@ -250,6 +253,15 @@ a {
 .brand-sub b {
   font-weight: 400;
   color: var(--highlight);
+}
+
+.brand-sub:hover {
+  color: var(--text);
+}
+
+.brand-sub:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .nav-link {
