@@ -23,19 +23,31 @@ function readGlobalHeaders(): Record<string, string> {
   return headers;
 }
 
+// Cabeceras que no tienen sentido sin HTTPS (localhost se sirve por HTTP).
+const HTTPS_ONLY = new Set(['strict-transport-security']);
+
 function securityHeaders(): Plugin {
   const headers = readGlobalHeaders();
-  const apply = (_req: IncomingMessage, res: ServerResponse, next: () => void) => {
-    for (const [name, value] of Object.entries(headers)) res.setHeader(name, value);
+  const middleware = (dev: boolean) => (_req: IncomingMessage, res: ServerResponse, next: () => void) => {
+    for (const [name, value] of Object.entries(headers)) {
+      if (HTTPS_ONLY.has(name.toLowerCase())) continue;
+      let finalValue = value;
+      if (name.toLowerCase() === 'content-security-policy') {
+        // upgrade-insecure-requests rompería http://localhost; en dev Vite inyecta los estilos en <style>.
+        finalValue = value.replace(/;\s*upgrade-insecure-requests/, '');
+        if (dev) finalValue = finalValue.replace("style-src 'self'", "style-src 'self' 'unsafe-inline'");
+      }
+      res.setHeader(name, finalValue);
+    }
     next();
   };
   return {
     name: 'security-headers',
     configureServer(server) {
-      server.middlewares.use(apply);
+      server.middlewares.use(middleware(true));
     },
     configurePreviewServer(server) {
-      server.middlewares.use(apply);
+      server.middlewares.use(middleware(false));
     },
   };
 }

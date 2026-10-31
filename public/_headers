@@ -1,15 +1,28 @@
 # Cabeceras de seguridad. Cloudflare las aplica a cada respuesta estática.
 # vite.config.ts lee este mismo bloque /* para `vite` y `vite preview`,
-# así la CSP que pruebas localmente es la que se despliega.
+# así la CSP que pruebas localmente es la que se despliega (en `vite` dev se
+# añade 'unsafe-inline' a style-src sólo porque Vite inyecta los estilos en línea).
+#
+# CSP:
+# - default-src 'none': todo lo que no está en la lista queda prohibido.
+# - script-src 'self' 'wasm-unsafe-eval': sólo scripts propios; WASM para qpdf y pdf.js. Sin eval.
+# - connect-src 'self' blob:: el sitio no puede enviar datos a otros servidores.
+# - form-action 'none' y frame-ancestors 'none': sin envíos de formularios ni clickjacking.
+# - require-trusted-types-for: no está activo porque pdf.js crea su worker con una URL en texto.
 
 /*
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; child-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: no-referrer
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Permissions-Policy: accelerometer=(), autoplay=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), xr-spatial-tracking=()
   Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Resource-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  Origin-Agent-Cluster: ?1
+  X-Permitted-Cross-Domain-Policies: none
+  X-DNS-Prefetch-Control: off
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

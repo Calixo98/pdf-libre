@@ -1,6 +1,7 @@
 import * as pdfjs from 'pdfjs-dist';
 import type { PDFDocumentLoadingTask } from 'pdfjs-dist';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { LIMITS } from './limits';
 
 // El worker lo empaqueta Vite; los recursos (cMaps, fuentes estándar, WASM) se
 // copian a public/pdfjs con scripts/copy-pdfjs-assets.mjs.
@@ -20,6 +21,13 @@ export function openPdfDocument(bytes: Uint8Array): PDFDocumentLoadingTask {
     cMapPacked: true,
     standardFontDataUrl: `${ASSET_BASE}standard_fonts/`,
     wasmUrl: `${ASSET_BASE}wasm/`,
+    // Endurecimiento frente a PDF maliciosos: sin formularios XFA (motor de
+    // scripts propio), sin pedir fuentes del sistema y con un tope de píxeles
+    // por imagen para que una imagen gigante incrustada no agote la memoria.
+    // pdf.js nunca ejecuta el JavaScript de un PDF: sólo dibuja en un canvas.
+    enableXfa: false,
+    useSystemFonts: false,
+    maxImageSize: LIMITS.maxImagePixels,
   });
 }
 

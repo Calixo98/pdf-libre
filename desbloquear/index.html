@@ -8,7 +8,9 @@
       name="description"
       content="Quita la contraseña de un PDF si la conoces, o sus restricciones de copia e impresión. Todo ocurre en tu navegador."
     />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23101418'/%3E%3Cpath d='M5 3.5h4.2L11.5 6v6.5H5z' fill='none' stroke='%23f2c14e' stroke-width='1.2'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#101418" />
+    <meta name="referrer" content="no-referrer" />
     <link rel="stylesheet" href="/src/styles/app.css" />
   </head>
   <body>
@@ -16,12 +18,16 @@
 
     <header class="site-header">
       <div class="container">
-        <a class="brand" href="../">PDF Libre</a>
+        <a class="brand" href="../" aria-label="PDF Libre por Renova, inicio">
+          <span class="brand-word">PDF Libre</span>
+          <span class="brand-sub">por <b>Renova</b></span>
+        </a>
         <a class="nav-link" href="../">Todas las herramientas</a>
       </div>
     </header>
 
     <main class="container">
+      <p class="eyebrow">Quitar contraseña</p>
       <h1>Quitar contraseña de un PDF</h1>
       <p class="lead">
         Si conoces la contraseña para abrir el PDF, escríbela y descarga una copia sin protección. Si el PDF solo
@@ -33,6 +39,7 @@
         <span class="hint">El archivo no sale de tu navegador.</span>
         <button id="pick-btn" class="btn btn-primary" type="button">Elegir PDF</button>
         <input id="file-input" class="visually-hidden" type="file" accept="application/pdf,.pdf" />
+        <span class="limits">Hasta 150 MB · Se procesa en tu navegador</span>
       </div>
 
       <section id="result-panel" class="panel" hidden aria-labelledby="result-title">
@@ -59,7 +66,15 @@
           </div>
         </form>
 
-        <div id="download-area" class="row" hidden>
+        <div id="download-area" class="download-area" hidden>
+          <label class="check">
+            <input id="sanitize-checkbox" type="checkbox" checked />
+            <span>
+              Quitar contenido activo (recomendado)
+              <small>Elimina JavaScript, acciones automáticas, archivos adjuntos y enlaces peligrosos que el PDF
+                pudiera esconder. El texto, las imágenes y los enlaces web se conservan.</small>
+            </span>
+          </label>
           <button id="download-btn" class="btn btn-primary" type="button">Descargar PDF sin protección</button>
         </div>
       </section>
@@ -72,8 +87,11 @@
       </p>
     </main>
 
-    <footer class="container site-footer">
-      <p>Código abierto bajo licencia MIT.</p>
+    <footer class="site-footer">
+      <div class="container">
+        <p>Código abierto bajo licencia MIT. Ningún archivo se envía a un servidor.</p>
+        <p class="signature"><a href="https://renova-ashen.vercel.app/" rel="noopener noreferrer">Renova Founders</a></p>
+      </div>
     </footer>
 
     <script type="module" src="/src/pages/desbloquear.ts"></script>

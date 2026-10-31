@@ -8,6 +8,8 @@ import { PageView } from '../editor/page-view';
 import { EditorSession, type SessionEvent } from '../editor/session';
 import { ThumbnailList } from '../editor/thumbnails';
 import type { ToolId, ToolSettings } from '../editor/model';
+import { assertFileSize, InputLimitError, LIMITS } from '../lib/limits';
+import { describeReport, totalRemoved } from '../lib/pdf-sanitize';
 
 const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
 const DEFAULT_ZOOM_INDEX = ZOOM_LEVELS.indexOf(1.25);
@@ -169,6 +171,7 @@ async function openFile(file: File): Promise<void> {
   fileName = file.name;
   try {
     setStatus(status, 'Abriendo el PDF…');
+    assertFileSize(file, LIMITS.maxPdfBytes);
     const bytes = await readFileBytes(file);
     if (!isPdfFile(bytes)) throw new Error(`"${file.name}" no parece un PDF.`);
     const source = await removeProtectionIfPossible(bytes);
@@ -184,7 +187,7 @@ async function openFile(file: File): Promise<void> {
       );
     }
   } catch (error) {
-    console.error(error);
+    if (!(error instanceof InputLimitError)) console.error(error);
     setStatus(status, `No se pudo abrir el PDF: ${errorMessage(error)}`, 'error');
   } finally {
     busy = false;
@@ -206,6 +209,10 @@ async function removeProtectionIfPossible(bytes: Uint8Array): Promise<Uint8Array
 
 async function unlockPending(password: string): Promise<void> {
   if (!pendingEncrypted || busy) return;
+  if (password.length > LIMITS.maxPasswordLength) {
+    setStatus(status, 'La contraseña es demasiado larga.', 'error');
+    return;
+  }
   busy = true;
   unlockButton.disabled = true;
   setStatus(status, 'Desbloqueando…');
@@ -345,10 +352,11 @@ async function exportAndDownload(): Promise<void> {
   downloadButton.disabled = true;
   setStatus(status, 'Generando el PDF editado…');
   try {
-    const bytes = await exportEditedPdf(sourceBytes, session.pages);
+    const { bytes, report } = await exportEditedPdf(sourceBytes, session.pages);
     downloadBytes(bytes, `${baseName(fileName)}-editado.pdf`, 'application/pdf');
     session.markSaved();
-    setStatus(status, `PDF descargado (${formatBytes(bytes.byteLength)}).`, 'ok');
+    const cleaned = totalRemoved(report) > 0 ? ` Por seguridad se quitó: ${describeReport(report)}.` : '';
+    setStatus(status, `PDF descargado (${formatBytes(bytes.byteLength)}).${cleaned}`, 'ok');
   } catch (error) {
     console.error(error);
     setStatus(status, `No se pudo generar el PDF: ${errorMessage(error)}`, 'error');

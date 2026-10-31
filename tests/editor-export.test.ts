@@ -28,7 +28,7 @@ describe('exportEditedPdf', () => {
       { sourceIndex: 0, rotation: 0, annotations: [] },
     ];
 
-    const output = await PDFDocument.load(await exportEditedPdf(source, pages));
+    const output = await PDFDocument.load((await exportEditedPdf(source, pages)).bytes);
 
     expect(output.getPageCount()).toBe(2);
   });
@@ -39,14 +39,14 @@ describe('exportEditedPdf', () => {
     const source = await original.save();
     const pages: EditorPage[] = [{ sourceIndex: 0, rotation: 270, annotations: [] }];
 
-    const output = await PDFDocument.load(await exportEditedPdf(source, pages));
+    const output = await PDFDocument.load((await exportEditedPdf(source, pages)).bytes);
 
     expect(output.getPage(0).getRotation().angle).toBe(0); // 90 + 270 = 360
   });
 
   it('dibuja texto, resaltado y trazos sobre la página', async () => {
     const source = await makePlainPdf('Base', 1);
-    const plainSize = (await exportEditedPdf(source, [{ sourceIndex: 0, rotation: 0, annotations: [] }])).byteLength;
+    const plainSize = (await exportEditedPdf(source, [{ sourceIndex: 0, rotation: 0, annotations: [] }])).bytes.byteLength;
     const pages: EditorPage[] = [
       {
         sourceIndex: 0,
@@ -69,7 +69,7 @@ describe('exportEditedPdf', () => {
       },
     ];
 
-    const annotated = await exportEditedPdf(source, pages);
+    const annotated = (await exportEditedPdf(source, pages)).bytes;
     const content = decodedStreams(annotated);
 
     expect(annotated.byteLength).toBeGreaterThan(plainSize);
@@ -96,7 +96,7 @@ describe('exportEditedPdf', () => {
     first.node.set(PDFName.of('Annots'), original.context.obj([original.context.register(link)]));
     const source = await original.save();
 
-    const output = await exportEditedPdf(source, [
+    const { bytes: output } = await exportEditedPdf(source, [
       { sourceIndex: 0, rotation: 0, annotations: [] },
       { sourceIndex: 1, rotation: 0, annotations: [] },
     ]);
