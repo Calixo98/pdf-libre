@@ -188,6 +188,8 @@ async function openFile(file: File): Promise<void> {
     setStatus(status, `No se pudo abrir el PDF: ${errorMessage(error)}`, 'error');
   } finally {
     busy = false;
+    // startEditor actualizó los controles mientras aún estaba ocupado: se vuelven a calcular.
+    updateControls();
   }
 }
 
@@ -228,6 +230,7 @@ async function unlockPending(password: string): Promise<void> {
   } finally {
     busy = false;
     unlockButton.disabled = false;
+    updateControls();
   }
 }
 

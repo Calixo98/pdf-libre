@@ -53,6 +53,7 @@ export class PageView {
   private viewport: PageViewport | null = null;
   private renderTask: RenderTask | null = null;
   private renderId = 0;
+  private renderQueue: Promise<void> = Promise.resolve();
   private draft: Annotation | null = null;
   private draftStart: Point | null = null;
   private textEditor: TextEditor | null = null;
@@ -107,18 +108,26 @@ export class PageView {
     this.redrawOverlay();
   }
 
-  /** Vuelve a dibujar la página actual (por ejemplo, tras un giro). */
-  async render(): Promise<void> {
+  /** Vuelve a dibujar la página actual (por ejemplo, tras un giro o un zoom). */
+  render(): Promise<void> {
     const id = ++this.renderId;
     this.renderTask?.cancel();
-    this.renderTask = null;
     this.viewport = null;
     this.redrawOverlay();
+    // Los renders van uno detrás de otro: empezar uno nuevo mientras el anterior aún se cancela
+    // sobre el mismo canvas dejaba la página en blanco después de varios zooms seguidos.
+    const next = this.renderQueue.then(() => this.draw(id));
+    this.renderQueue = next.catch(() => undefined);
+    return next;
+  }
 
+  private async draw(id: number): Promise<void> {
+    if (id !== this.renderId) return; // ya hay una petición más reciente
     const attached = this.attached;
     const entry = attached?.session.pages[this.pageIndex];
     if (!attached || !entry) return;
 
+    let task: RenderTask | null = null;
     try {
       const page = await attached.doc.getPage(entry.sourceIndex + 1);
       if (id !== this.renderId) return;
@@ -130,7 +139,10 @@ export class PageView {
       const dpr = window.devicePixelRatio || 1;
       this.sizeCanvases(viewport, dpr);
 
-      const task = page.render({ canvas: this.canvas, viewport, transform: [dpr, 0, 0, dpr, 0, 0] });
+      // Con canvasContext y canvas en null, pdf.js dibuja en el contexto que se le da (forma documentada).
+      const context = this.canvas.getContext('2d');
+      if (!context) throw new Error('El navegador no ofrece canvas 2D');
+      task = page.render({ canvasContext: context, canvas: null, viewport, transform: [dpr, 0, 0, dpr, 0, 0] });
       this.renderTask = task;
       await task.promise;
       if (id !== this.renderId) return;
@@ -142,6 +154,8 @@ export class PageView {
       if (isRenderCancelled(error) || id !== this.renderId) return;
       console.error(error);
       this.report(`No se pudo mostrar la página: ${errorMessage(error)}`, 'error');
+    } finally {
+      if (this.renderTask === task) this.renderTask = null;
     }
   }
 
