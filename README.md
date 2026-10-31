@@ -10,6 +10,9 @@ Tus archivos **no se suben a ningún servidor**. Cloudflare sólo sirve los arch
 
 Licencia MIT (ver [LICENSE](LICENSE)).
 
+Sitio publicado: https://pdf-libre.stopsfinest.workers.dev
+
+
 ## Uso local
 
 Necesitas Node.js 22.12 o superior.
