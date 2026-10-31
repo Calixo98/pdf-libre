@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+coverage/
+# Configuración local del visor de la sesión de Claude
+.claude/
+# Copias generadas por scripts/copy-pdfjs-assets.mjs
+public/pdfjs/
+
+*.log
+.DS_Store
+Thumbs.db

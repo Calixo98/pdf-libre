@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pdf-libre",
+  "compatibility_date": "2026-10-30",
+  // Sitio estático: no hay Worker. Cloudflare sirve dist/ y aplica dist/_headers.
+  "assets": {
+    "directory": "./dist"
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quitar contraseña de PDF · PDF Libre</title>
+    <meta
+      name="description"
+      content="Quita la contraseña de un PDF si la conoces, o sus restricciones de copia e impresión. Todo ocurre en tu navegador."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+  </head>
+  <body>
+    <noscript><p class="container">Necesitas JavaScript para usar esta herramienta.</p></noscript>
+
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="../">PDF Libre</a>
+        <a class="nav-link" href="../">Todas las herramientas</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Quitar contraseña de un PDF</h1>
+      <p class="lead">
+        Si conoces la contraseña para abrir el PDF, escríbela y descarga una copia sin protección. Si el PDF solo
+        tiene restricciones (copiar, imprimir o editar), se quitan sin contraseña.
+      </p>
+
+      <div id="dropzone" class="dropzone">
+        <strong>Arrastra tu PDF aquí</strong>
+        <span class="hint">El archivo no sale de tu navegador.</span>
+        <button id="pick-btn" class="btn btn-primary" type="button">Elegir PDF</button>
+        <input id="file-input" class="visually-hidden" type="file" accept="application/pdf,.pdf" />
+      </div>
+
+      <section id="result-panel" class="panel" hidden aria-labelledby="result-title">
+        <h2 id="result-title" class="visually-hidden">Resultado</h2>
+        <div class="file-summary">
+          <span id="file-name" class="file-name"></span>
+          <span id="file-size" class="file-meta"></span>
+        </div>
+
+        <form id="password-form" class="password-form" hidden>
+          <label class="field">
+            Contraseña para abrir el PDF
+            <input
+              id="password-input"
+              type="password"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              required
+            />
+          </label>
+          <div class="row">
+            <button id="unlock-btn" class="btn btn-primary" type="submit">Desbloquear</button>
+          </div>
+        </form>
+
+        <div id="download-area" class="row" hidden>
+          <button id="download-btn" class="btn btn-primary" type="button">Descargar PDF sin protección</button>
+        </div>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <p class="notice">
+        Usa esta herramienta solo con archivos tuyos o con permiso de quien los protegió. La contraseña se usa en
+        tu navegador: no se guarda ni se envía.
+      </p>
+    </main>
+
+    <footer class="container site-footer">
+      <p>Código abierto bajo licencia MIT.</p>
+    </footer>
+
+    <script type="module" src="/src/pages/desbloquear.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JPG a PDF · PDF Libre</title>
+    <meta name="description" content="Convierte fotos JPG y PNG en un PDF. Todo ocurre en tu navegador." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+  </head>
+  <body>
+    <noscript><p class="container">Necesitas JavaScript para usar esta herramienta.</p></noscript>
+
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="../">PDF Libre</a>
+        <a class="nav-link" href="../">Todas las herramientas</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>JPG a PDF</h1>
+      <p class="lead">
+        Une varias fotos o imágenes en un solo PDF, en el orden que elijas. Tus imágenes no salen de tu navegador.
+      </p>
+
+      <div id="dropzone" class="dropzone">
+        <strong>Arrastra tus imágenes aquí</strong>
+        <span class="hint">JPG o PNG. Las fotos de iPhone en HEIC deben convertirse a JPG antes.</span>
+        <button id="pick-btn" class="btn btn-primary" type="button">Elegir imágenes</button>
+        <input id="file-input" class="visually-hidden" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple />
+      </div>
+
+      <section id="list-panel" class="panel" hidden aria-labelledby="list-title">
+        <h2 id="list-title">Imágenes (<span id="count">0</span>)</h2>
+        <p class="notice">Usa las flechas para cambiar el orden: la primera imagen será la primera página.</p>
+        <ul id="file-list" class="file-list"></ul>
+
+        <div class="row options">
+          <label class="field">
+            Tamaño de página
+            <select id="page-size">
+              <option value="a4" selected>A4</option>
+              <option value="letter">Carta</option>
+              <option value="fit">Ajustar a la imagen</option>
+            </select>
+          </label>
+          <label class="field">
+            Orientación
+            <select id="orientation">
+              <option value="auto" selected>Automática</option>
+              <option value="portrait">Vertical</option>
+              <option value="landscape">Horizontal</option>
+            </select>
+          </label>
+          <label class="field">
+            Margen
+            <select id="margin">
+              <option value="0">Sin margen</option>
+              <option value="10" selected>Normal (10 mm)</option>
+              <option value="20">Amplio (20 mm)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row action-row">
+          <button id="create-btn" class="btn btn-primary" type="button" disabled>Crear PDF</button>
+          <button id="clear-btn" class="btn" type="button">Quitar todas</button>
+        </div>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <footer class="container site-footer">
+      <p>Tus imágenes se procesan en este dispositivo. Ningún archivo se envía a un servidor.</p>
+    </footer>
+
+    <script type="module" src="/src/pages/jpg-a-pdf.ts"></script>
+  </body>
+</html>

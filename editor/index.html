@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editor de PDF · PDF Libre</title>
+    <meta
+      name="description"
+      content="Añade texto, resalta, dibuja y ordena páginas de un PDF. Todo ocurre en tu navegador y no se sube nada."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+  </head>
+  <body>
+    <noscript><p class="container">Necesitas JavaScript para usar el editor.</p></noscript>
+
+    <header class="site-header" id="site-header">
+      <div class="container">
+        <a class="brand" href="../">PDF Libre</a>
+        <a class="nav-link" href="../">Todas las herramientas</a>
+      </div>
+    </header>
+
+    <p id="status" class="status container" role="status" aria-live="polite"></p>
+
+    <main id="open-view" class="container">
+      <h1>Editor de PDF</h1>
+      <p class="lead">
+        Abre un PDF para añadir texto, resaltar, dibujar, girar, reordenar o quitar páginas. Cuando termines,
+        descárgalo editado. Nada sale de tu navegador.
+      </p>
+
+      <div id="dropzone" class="dropzone">
+        <strong>Arrastra tu PDF aquí</strong>
+        <span class="hint">Si está protegido con contraseña, te la pediremos.</span>
+        <button id="pick-btn" class="btn btn-primary" type="button">Elegir PDF</button>
+        <input id="file-input" class="visually-hidden" type="file" accept="application/pdf,.pdf" />
+      </div>
+
+      <section id="password-panel" class="panel" hidden aria-labelledby="password-title">
+        <h2 id="password-title">Este PDF está protegido</h2>
+        <form id="password-form" class="password-form">
+          <label class="field">
+            Contraseña para abrirlo
+            <input
+              id="password-input"
+              type="password"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              required
+            />
+          </label>
+          <div class="row">
+            <button id="unlock-btn" class="btn btn-primary" type="submit">Abrir en el editor</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <div id="editor-view" class="editor-app" hidden>
+      <div class="editor-topbar">
+        <span id="file-name" class="file-name"></span>
+        <button id="open-another-btn" class="btn btn-small" type="button">Abrir otro PDF</button>
+        <button id="undo-btn" class="btn btn-small" type="button" disabled>Deshacer</button>
+        <button id="download-btn" class="btn btn-small btn-primary" type="button" disabled>Descargar PDF</button>
+      </div>
+
+      <div class="toolbar" role="toolbar" aria-label="Herramientas de edición">
+        <div class="tool-group" role="radiogroup" aria-label="Herramienta">
+          <label><input type="radio" name="tool" value="navigate" checked /><span>Mover</span></label>
+          <label><input type="radio" name="tool" value="text" /><span>Texto</span></label>
+          <label><input type="radio" name="tool" value="highlight" /><span>Resaltar</span></label>
+          <label><input type="radio" name="tool" value="ink" /><span>Dibujar</span></label>
+          <label><input type="radio" name="tool" value="erase" /><span>Borrar</span></label>
+        </div>
+
+        <label class="field">
+          Color de texto y dibujo
+          <input id="text-color" type="color" value="#1b1f24" />
+        </label>
+        <label class="field">
+          Color de resaltado
+          <input id="highlight-color" type="color" value="#ffd400" />
+        </label>
+        <label class="field">
+          Tamaño de texto
+          <select id="text-size">
+            <option value="10">10 pt</option>
+            <option value="12">12 pt</option>
+            <option value="14" selected>14 pt</option>
+            <option value="18">18 pt</option>
+            <option value="24">24 pt</option>
+          </select>
+        </label>
+        <label class="field">
+          Grosor de trazo
+          <select id="ink-width">
+            <option value="1">Fino</option>
+            <option value="2" selected>Normal</option>
+            <option value="3">Grueso</option>
+            <option value="5">Muy grueso</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="workspace">
+        <aside id="thumbs" class="thumbs" aria-label="Páginas"></aside>
+
+        <section class="stage" aria-label="Página en edición">
+          <div class="stage-nav">
+            <button id="prev-btn" class="btn btn-small" type="button">Anterior</button>
+            <span id="page-label" class="page-label" aria-live="polite">Página 1 de 1</span>
+            <button id="next-btn" class="btn btn-small" type="button">Siguiente</button>
+            <button id="rotate-left-btn" class="btn btn-small" type="button">Girar a la izquierda</button>
+            <button id="rotate-right-btn" class="btn btn-small" type="button">Girar a la derecha</button>
+            <button id="delete-page-btn" class="btn btn-small" type="button">Eliminar página</button>
+            <span class="zoom-group">
+              <button id="zoom-out-btn" class="btn btn-small btn-icon" type="button" aria-label="Alejar">−</button>
+              <span id="zoom-label">125 %</span>
+              <button id="zoom-in-btn" class="btn btn-small btn-icon" type="button" aria-label="Acercar">+</button>
+            </span>
+          </div>
+
+          <div class="page-scroll">
+            <div id="page-wrap" class="page-wrap">
+              <canvas id="page-canvas" aria-label="Vista de la página"></canvas>
+              <canvas id="overlay" class="overlay" aria-label="Área de anotaciones"></canvas>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="/src/pages/editor.ts"></script>
+  </body>
+</html>
