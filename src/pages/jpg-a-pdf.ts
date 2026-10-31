@@ -8,6 +8,7 @@ import {
 import { prepareImage } from '../lib/image-prep';
 import { baseName, downloadBytes } from '../lib/download';
 import { errorMessage, formatBytes, requireElement, setStatus } from '../ui/common';
+import { InputLimitError, LIMITS } from '../lib/limits';
 
 interface ImageItem {
   id: number;
@@ -74,19 +75,45 @@ function addFiles(files: FileList | null): void {
     return;
   }
   const rejected: string[] = [];
+  const tooBig: string[] = [];
+  let overLimit = 0;
+  let totalBytes = items.reduce((sum, item) => sum + item.file.size, 0);
   for (const file of Array.from(files)) {
     if (!isSupported(file)) {
       rejected.push(file.name);
       continue;
     }
+    if (file.size === 0 || file.size > LIMITS.maxImageBytes) {
+      tooBig.push(file.name);
+      continue;
+    }
+    if (items.length >= LIMITS.maxImages || totalBytes + file.size > LIMITS.maxTotalImageBytes) {
+      overLimit++;
+      continue;
+    }
+    totalBytes += file.size;
     items.push({ id: nextId++, file, previewUrl: URL.createObjectURL(file) });
   }
   render();
-  if (rejected.length > 0) {
-    setStatus(status, `Se omitieron (solo JPG o PNG): ${rejected.join(', ')}`, 'error');
-  } else {
-    setStatus(status, '');
+  const problems: string[] = [];
+  if (rejected.length > 0) problems.push(`Se omitieron (solo JPG o PNG): ${listNames(rejected)}.`);
+  if (tooBig.length > 0) {
+    problems.push(`Se omitieron por tamaño (vacías o de más de ${formatBytes(LIMITS.maxImageBytes)}): ${listNames(tooBig)}.`);
   }
+  if (overLimit > 0) {
+    problems.push(
+      `Se omitieron ${overLimit} imagen(es): el máximo es ${LIMITS.maxImages} imágenes y ${formatBytes(
+        LIMITS.maxTotalImageBytes,
+      )} en total por PDF.`,
+    );
+  }
+  setStatus(status, problems.join(' '), problems.length > 0 ? 'error' : 'info');
+}
+
+/** Lista corta de nombres para los avisos (un usuario puede soltar cientos de archivos). */
+function listNames(names: string[]): string {
+  const shown = names.slice(0, 5).join(', ');
+  return names.length > 5 ? `${shown} y ${names.length - 5} más` : shown;
 }
 
 function isSupported(file: File): boolean {
@@ -181,7 +208,7 @@ async function createPdf(): Promise<void> {
     const summary = `PDF creado con ${images.length} página(s), ${formatBytes(bytes.byteLength)}.`;
     setStatus(status, warnings.length > 0 ? `${summary} ${warnings.join(' ')}` : summary, warnings.length > 0 ? 'info' : 'ok');
   } catch (error) {
-    console.error(error);
+    if (!(error instanceof InputLimitError)) console.error(error);
     setStatus(status, `No se pudo crear el PDF: ${errorMessage(error)}`, 'error');
   } finally {
     busy = false;

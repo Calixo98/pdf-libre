@@ -18,12 +18,21 @@ import {
   type Annotation,
   type EditorPage,
 } from './model';
+import { sanitizePdfDocument, type SanitizeReport } from '../lib/pdf-sanitize';
+
+export interface ExportResult {
+  bytes: Uint8Array;
+  /** Contenido activo (scripts, acciones, adjuntos…) que se quitó del PDF exportado. */
+  report: SanitizeReport;
+}
 
 /**
  * Genera el PDF final: aplica las anotaciones en el PDF original, luego copia
  * las páginas en el orden elegido con sus giros. Las páginas quitadas no se copian.
+ * Al final se quita el contenido activo que las páginas copiadas pudieran traer
+ * (acciones automáticas, scripts, adjuntos, enlaces javascript:…).
  */
-export async function exportEditedPdf(source: Uint8Array, pages: EditorPage[]): Promise<Uint8Array> {
+export async function exportEditedPdf(source: Uint8Array, pages: EditorPage[]): Promise<ExportResult> {
   if (pages.length === 0) throw new Error('El PDF no tiene páginas para exportar');
 
   const original = await PDFDocument.load(source, { updateMetadata: false });
@@ -50,7 +59,8 @@ export async function exportEditedPdf(source: Uint8Array, pages: EditorPage[]): 
     copy.setRotation(degrees(normalizeRotation(base + entry.rotation)));
     output.addPage(copy);
   });
-  return output.save();
+  const report = sanitizePdfDocument(output);
+  return { bytes: await output.save(), report };
 }
 
 /**

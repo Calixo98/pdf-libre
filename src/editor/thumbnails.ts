@@ -1,8 +1,11 @@
 import { isRenderCancelled, type PDFDocumentProxy } from '../lib/pdfjs';
+import { canvasScaleCap } from '../lib/limits';
 import { normalizeRotation } from './model';
 import type { EditorSession } from './session';
 
 const THUMB_WIDTH_PX = 120;
+/** Una miniatura nunca necesita más de ~1 megapíxel, aunque la página sea larguísima. */
+const MAX_THUMB_PIXELS = 1_048_576;
 
 export interface ThumbnailCallbacks {
   onSelect(index: number): void;
@@ -150,7 +153,9 @@ export class ThumbnailList {
       const rotation = normalizeRotation(page.rotate + entry.rotation);
       const natural = page.getViewport({ scale: 1, rotation });
       const viewport = page.getViewport({ scale: THUMB_WIDTH_PX / natural.width, rotation });
-      const dpr = window.devicePixelRatio || 1;
+      const screenDpr = window.devicePixelRatio || 1;
+      const dpr =
+        screenDpr * canvasScaleCap(viewport.width * screenDpr, viewport.height * screenDpr, MAX_THUMB_PIXELS);
       canvas.width = Math.floor(viewport.width * dpr);
       canvas.height = Math.floor(viewport.height * dpr);
 

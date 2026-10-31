@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Cada lunes: detecta vulnerabilidades nuevas en las dependencias aunque no haya cambios.
+    - cron: '17 6 * * 1'
+
+# Mínimo privilegio: el workflow sólo lee el repositorio.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Instalar dependencias exactas del lockfile
+        run: npm ci
+      - name: Verificar firmas y procedencia de los paquetes
+        run: npm audit signatures
+      - name: Auditoría de vulnerabilidades
+        run: npm audit --audit-level=moderate
+      - name: Tipos
+        run: npm run typecheck
+      - name: Pruebas
+        run: npm test
+      - name: Build
+        run: npm run build

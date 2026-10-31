@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JPG a PDF · PDF Libre</title>
     <meta name="description" content="Convierte fotos JPG y PNG en un PDF. Todo ocurre en tu navegador." />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23101418'/%3E%3Cpath d='M5 3.5h4.2L11.5 6v6.5H5z' fill='none' stroke='%23f2c14e' stroke-width='1.2'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#101418" />
+    <meta name="referrer" content="no-referrer" />
     <link rel="stylesheet" href="/src/styles/app.css" />
   </head>
   <body>
@@ -13,12 +15,16 @@
 
     <header class="site-header">
       <div class="container">
-        <a class="brand" href="../">PDF Libre</a>
+        <a class="brand" href="../" aria-label="PDF Libre por Renova, inicio">
+          <span class="brand-word">PDF Libre</span>
+          <span class="brand-sub">por <b>Renova</b></span>
+        </a>
         <a class="nav-link" href="../">Todas las herramientas</a>
       </div>
     </header>
 
     <main class="container">
+      <p class="eyebrow">JPG a PDF</p>
       <h1>JPG a PDF</h1>
       <p class="lead">
         Une varias fotos o imágenes en un solo PDF, en el orden que elijas. Tus imágenes no salen de tu navegador.
@@ -29,6 +35,7 @@
         <span class="hint">JPG o PNG. Las fotos de iPhone en HEIC deben convertirse a JPG antes.</span>
         <button id="pick-btn" class="btn btn-primary" type="button">Elegir imágenes</button>
         <input id="file-input" class="visually-hidden" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple />
+        <span class="limits">Hasta 300 imágenes · 40 MB cada una</span>
       </div>
 
       <section id="list-panel" class="panel" hidden aria-labelledby="list-title">
@@ -72,8 +79,11 @@
       <p id="status" class="status" role="status" aria-live="polite"></p>
     </main>
 
-    <footer class="container site-footer">
-      <p>Tus imágenes se procesan en este dispositivo. Ningún archivo se envía a un servidor.</p>
+    <footer class="site-footer">
+      <div class="container">
+        <p>Tus imágenes se procesan en este dispositivo. Ningún archivo se envía a un servidor.</p>
+        <p class="signature"><a href="https://renova-ashen.vercel.app/" rel="noopener noreferrer">Renova Founders</a></p>
+      </div>
     </footer>
 
     <script type="module" src="/src/pages/jpg-a-pdf.ts"></script>

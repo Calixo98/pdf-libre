@@ -1,6 +1,8 @@
 import { readJpegOrientation } from './jpeg-orientation';
 import { toBlob } from './download';
 import type { PdfImage } from './images-to-pdf';
+import { readJpegDimensions, readPngDimensions } from './image-dimensions';
+import { assertFileSize, assertImageDimensions, LIMITS } from './limits';
 
 export interface PreparedImage {
   image: PdfImage;
@@ -23,9 +25,16 @@ export function detectImageKind(bytes: Uint8Array): PdfImage['kind'] | null {
  * codificar con el navegador, que sí aplica la orientación.
  */
 export async function prepareImage(file: File): Promise<PreparedImage> {
+  assertFileSize(file, LIMITS.maxImageBytes);
   const bytes = new Uint8Array(await file.arrayBuffer());
   const kind = detectImageKind(bytes);
   if (!kind) throw new Error(`"${file.name}" no es un JPG ni un PNG.`);
+
+  // Las dimensiones se leen de la cabecera antes de decodificar: una imagen
+  // pequeña en disco puede declarar millones de píxeles y agotar la memoria.
+  const dimensions = kind === 'jpg' ? readJpegDimensions(bytes) : readPngDimensions(bytes);
+  if (!dimensions) throw new Error(`"${file.name}" está dañada: no se pudo leer su tamaño.`);
+  assertImageDimensions(file.name, dimensions.width, dimensions.height);
 
   if (kind === 'jpg' && readJpegOrientation(bytes) !== 1) {
     try {

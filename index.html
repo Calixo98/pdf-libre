@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Libre · Herramientas PDF de código abierto</title>
+    <title>PDF Libre · Herramientas PDF de Renova</title>
     <meta
       name="description"
       content="Convierte JPG a PDF, edita PDF y quita contraseñas. Código abierto y sin subir tus archivos a ningún servidor."
     />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23101418'/%3E%3Cpath d='M5 3.5h4.2L11.5 6v6.5H5z' fill='none' stroke='%23f2c14e' stroke-width='1.2'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#101418" />
+    <meta name="referrer" content="no-referrer" />
     <link rel="stylesheet" href="/src/styles/app.css" />
   </head>
   <body>
@@ -16,34 +18,70 @@
 
     <header class="site-header">
       <div class="container">
-        <a class="brand" href="./">PDF Libre</a>
+        <a class="brand" href="./" aria-label="PDF Libre por Renova, inicio">
+          <span class="brand-word">PDF Libre</span>
+          <span class="brand-sub">por <b>Renova</b></span>
+        </a>
       </div>
     </header>
 
     <main class="container">
-      <h1>Herramientas PDF gratuitas y de código abierto</h1>
-      <p class="lead">
-        Todo se procesa en tu navegador: tus archivos no se suben a ningún servidor. Elige una herramienta.
-      </p>
+      <section class="hero">
+        <p class="eyebrow">Herramientas PDF</p>
+        <h1>Tus documentos, <em>en tus manos</em>.</h1>
+        <p class="lead">
+          Convierte, edita y desbloquea PDF directamente en tu navegador. Tus archivos nunca se suben a ningún
+          servidor.
+        </p>
+        <ul class="trust" aria-label="Garantías">
+          <li>Sin subir archivos</li>
+          <li>Código abierto</li>
+          <li>Gratis y sin registro</li>
+        </ul>
+      </section>
 
       <nav class="cards" aria-label="Herramientas">
         <a class="card" href="jpg-a-pdf/">
+          <span class="card-index">01</span>
           <span class="card-title">JPG a PDF</span>
           <p>Une varias fotos o imágenes en un solo PDF, en el orden que elijas.</p>
+          <span class="card-go" aria-hidden="true">Abrir</span>
         </a>
         <a class="card" href="editor/">
+          <span class="card-index">02</span>
           <span class="card-title">Editor de PDF</span>
           <p>Añade texto, resalta, dibuja y ordena, gira o elimina páginas.</p>
+          <span class="card-go" aria-hidden="true">Abrir</span>
         </a>
         <a class="card" href="desbloquear/">
+          <span class="card-index">03</span>
           <span class="card-title">Quitar contraseña</span>
           <p>Desbloquea un PDF protegido si conoces su contraseña, y quita sus restricciones.</p>
+          <span class="card-go" aria-hidden="true">Abrir</span>
         </a>
       </nav>
+
+      <section class="security-strip" aria-label="Seguridad">
+        <div>
+          <h2>Privado por diseño</h2>
+          <p>Todo ocurre en tu dispositivo. El sitio no tiene servidor que reciba tus archivos ni tus contraseñas.</p>
+        </div>
+        <div>
+          <h2>PDF sin sorpresas</h2>
+          <p>Al descargar, quitamos el JavaScript, las acciones automáticas y los adjuntos ocultos del PDF.</p>
+        </div>
+        <div>
+          <h2>Abierto y auditable</h2>
+          <p>El código es público y está revisado contra OWASP Top 10. Cualquiera puede comprobar qué hace.</p>
+        </div>
+      </section>
     </main>
 
-    <footer class="container site-footer">
-      <p>Código abierto bajo licencia MIT. Hecho con pdf-lib, pdf.js y qpdf (WASM).</p>
+    <footer class="site-footer">
+      <div class="container">
+        <p>Código abierto bajo licencia MIT. Hecho con pdf-lib, pdf.js y qpdf (WASM).</p>
+        <p class="signature"><a href="https://renova-ashen.vercel.app/" rel="noopener noreferrer">Renova Founders</a></p>
+      </div>
     </footer>
   </body>
 </html>

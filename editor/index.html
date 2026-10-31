@@ -8,15 +8,20 @@
       name="description"
       content="Añade texto, resalta, dibuja y ordena páginas de un PDF. Todo ocurre en tu navegador y no se sube nada."
     />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232456d6'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3.5' fill='%23101418'/%3E%3Cpath d='M5 3.5h4.2L11.5 6v6.5H5z' fill='none' stroke='%23f2c14e' stroke-width='1.2'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#101418" />
+    <meta name="referrer" content="no-referrer" />
     <link rel="stylesheet" href="/src/styles/app.css" />
   </head>
   <body>
     <noscript><p class="container">Necesitas JavaScript para usar el editor.</p></noscript>
 
-    <header class="site-header" id="site-header">
+    <header class="site-header">
       <div class="container">
-        <a class="brand" href="../">PDF Libre</a>
+        <a class="brand" href="../" aria-label="PDF Libre por Renova, inicio">
+          <span class="brand-word">PDF Libre</span>
+          <span class="brand-sub">por <b>Renova</b></span>
+        </a>
         <a class="nav-link" href="../">Todas las herramientas</a>
       </div>
     </header>
@@ -24,6 +29,7 @@
     <p id="status" class="status container" role="status" aria-live="polite"></p>
 
     <main id="open-view" class="container">
+      <p class="eyebrow">Editor de PDF</p>
       <h1>Editor de PDF</h1>
       <p class="lead">
         Abre un PDF para añadir texto, resaltar, dibujar, girar, reordenar o quitar páginas. Cuando termines,
@@ -35,6 +41,7 @@
         <span class="hint">Si está protegido con contraseña, te la pediremos.</span>
         <button id="pick-btn" class="btn btn-primary" type="button">Elegir PDF</button>
         <input id="file-input" class="visually-hidden" type="file" accept="application/pdf,.pdf" />
+        <span class="limits">Hasta 150 MB · Se procesa en tu navegador</span>
       </div>
 
       <section id="password-panel" class="panel" hidden aria-labelledby="password-title">

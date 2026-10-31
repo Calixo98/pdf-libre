@@ -2,6 +2,7 @@ import { errorMessage, type StatusTone } from '../ui/common';
 import { isRenderCancelled, type PageViewport, type PDFDocumentProxy, type RenderTask } from '../lib/pdfjs';
 import { drawAnnotation, measureText } from './draw';
 import { findAnnotationAt } from './geometry';
+import { canvasScaleCap } from '../lib/limits';
 import { normalizeRotation, type Annotation, type Point, type ToolId, type ToolSettings } from './model';
 import type { EditorSession } from './session';
 
@@ -136,7 +137,9 @@ export class PageView {
         scale: this.scale,
         rotation: normalizeRotation(page.rotate + entry.rotation),
       });
-      const dpr = window.devicePixelRatio || 1;
+      // Una página puede declarar un tamaño enorme: se baja la resolución para no agotar la memoria.
+      const screenDpr = window.devicePixelRatio || 1;
+      const dpr = screenDpr * canvasScaleCap(viewport.width * screenDpr, viewport.height * screenDpr);
       this.sizeCanvases(viewport, dpr);
 
       // Con canvasContext y canvas en null, pdf.js dibuja en el contexto que se le da (forma documentada).
